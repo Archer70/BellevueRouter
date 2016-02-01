@@ -1,0 +1,10 @@
+{
+    "name": "BellevueRouter",
+    "description": "A small router library with path variable support.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Bellevue\\Router\\": ""
+        }
+    }
+}
