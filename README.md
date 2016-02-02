@@ -1,4 +1,4 @@
-# BellevueRouter
+# BellevueRouter [![Build Status](https://travis-ci.org/Archer70/BellevueRouter.svg?branch=master)](https://travis-ci.org/Archer70/BellevueRouter)
 A small router with path variable support.
 
 ## Examples
