@@ -63,7 +63,8 @@ class Router
     private function functionArguments()
     {
         $arguments = array_key_exists('arguments', $this->matchedRoute) ? $this->matchedRoute['arguments'] : [];
-        if (!empty($this->getVariablesInRoute())) {
+        $variablesInRoute = $this->getVariablesInRoute();
+        if (!empty($variablesInRoute)) {
             return $this->replaceVariableNamesWithValues($arguments);
         }
         return $arguments;
