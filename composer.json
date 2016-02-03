@@ -1,7 +1,12 @@
 {
-    "name": "BellevueRouter",
+    "name": "bellevue/router",
     "description": "A small router library with path variable support.",
+    "type": "library",
+    "keywords": ["route", "router"],
     "license": "MIT",
+    "require": {
+        "php": ">=5.4.0"
+    },
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
     },
