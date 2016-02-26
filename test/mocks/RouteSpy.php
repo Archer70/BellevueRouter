@@ -9,6 +9,18 @@ class RouteSpy
     public static $instanceArgumentsSet = false;
     public static $dynamicArgumentsSetInStaticMethod = false;
     public static $dynamicArgumentsSetInObjectMethod = false;
+    public static $constructorGotArgs = false;
+    public static $gotDependencies = true;
+
+    public function __construct($arg1 = null, $arg2 = null, $object = null)
+    {
+        if ($arg1 && $arg2) {
+            self::$constructorGotArgs = true;
+        }
+        if ($object instanceof \stdClass) {
+            self::$gotDependencies = true;
+        }
+    }
 
     public static function main()
     {
@@ -48,5 +60,7 @@ class RouteSpy
         self::$instanceArgumentsSet = false;
         self::$dynamicArgumentsSetInStaticMethod = false;
         self::$dynamicArgumentsSetInObjectMethod = false;
+        self::$constructorGotArgs = false;
+        self::$gotDependencies = false;
     }
 }

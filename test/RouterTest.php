@@ -57,6 +57,21 @@ class RouterTest extends TestCase
                 'object' => 'Bellevue\Router\test\mocks\RouteSpy',
                 'method' => 'dynamicObjectMethod',
                 'arguments' => ['{arg}', '{arg2}']
+            ],
+            '/object-construct/{arg}/{arg2}' => [
+                'object' => 'Bellevue\Router\test\mocks\RouteSpy',
+                'construct-arguments' => ['{arg}', '{arg2}'],
+                'method' => 'mainInstance'
+            ],
+            '/object-construct-plain-args' => [
+                'object' => 'Bellevue\Router\test\mocks\RouteSpy',
+                'construct-arguments' => ['nothing interesting', 'plain'],
+                'method' => 'mainInstance'
+            ],
+            '/object-with-deps' => [
+                'object' => 'Bellevue\Router\test\mocks\RouteSpy',
+                'construct-arguments' => ['nothing interesting', 'plain', 'object:stdClass'],
+                'method' => 'mainInstance'
             ]
         ]);
         $this->resetSpyVariables();
@@ -147,10 +162,29 @@ class RouterTest extends TestCase
         $this->assertTrue(RouteSpy::$dynamicArgumentsSetInObjectMethod);
     }
 
+    public function testSendsArgumentsToObjectConstructor()
+    {
+        $this->router->route('/object-construct/arg1/arg2');
+        $this->assertTrue(RouteSpy::$constructorGotArgs);
+    }
+
+    public function testSendsStaticArgsToConstructor()
+    {
+        $this->router->route('/object-construct-plain-args');
+        $this->assertTrue(RouteSpy::$constructorGotArgs);
+    }
+
     public function testRoutesToDefaultIfNoRouteIsMatched()
     {
         $this->router->route('/does-not-exist');
         $this->assertTrue(RouteSpy::$mainCalled);
+    }
+
+    // This is the cool stuff ri'tcher
+    public function testInjectsDependencyObjects()
+    {
+        $this->router->route('/object-with-deps');
+        $this->assertTrue(RouteSpy::$gotDependencies);
     }
 
     /**

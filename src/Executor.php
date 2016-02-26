@@ -5,11 +5,13 @@ class Executor
 {
     private $matchedRoute;
     private $functionArguments;
+    private $constructorArguments;
 
-    public function execute(array $matchedRoute, array $functionArguments = null)
+    public function execute(array $matchedRoute, array $functionArguments = null, array $constructorArguments = null)
     {
         $this->matchedRoute = $matchedRoute;
         $this->functionArguments = $functionArguments;
+        $this->constructorArguments = $constructorArguments;
 
         $this->runBasedOnType();
     }
@@ -37,6 +39,12 @@ class Executor
 
     private function callObjectMethod()
     {
-        call_user_func_array([new $this->matchedRoute['object'], $this->matchedRoute['method']], $this->functionArguments);
+        if ($this->constructorArguments) {
+            $reflection = new \ReflectionClass($this->matchedRoute['object']);
+            $object = $reflection->newInstanceArgs($this->constructorArguments);
+        } else {
+            $object = new $this->matchedRoute['object'];
+        }
+        call_user_func_array([$object, $this->matchedRoute['method']], $this->functionArguments);
     }
 }

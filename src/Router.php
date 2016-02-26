@@ -21,7 +21,7 @@ class Router
         $this->path = $path;
         $this->matchedRoute = $this->getMatchedRoute();
 
-        $this->executor->execute($this->matchedRoute, $this->functionArguments());
+        $this->executor->execute($this->matchedRoute, $this->functionArguments(), $this->constructorArguments());
     }
 
     private function getMatchedRoute()
@@ -60,12 +60,24 @@ class Router
         return '/' . preg_replace('/\{.+\}/U', '([a-zA-Z0-9_\-\+]+)', $regex) . '$/';
     }
 
-    private function functionArguments()
+    private function functionArguments($forConstructor = false)
     {
-        $arguments = array_key_exists('arguments', $this->matchedRoute) ? $this->matchedRoute['arguments'] : [];
+        $argsType = $forConstructor ? 'construct-arguments' : 'arguments';
+        $arguments = array_key_exists($argsType, $this->matchedRoute) ? $this->matchedRoute[$argsType] : [];
+        $arguments = $this->instanciateObjects($arguments);
         $variablesInRoute = $this->getVariablesInRoute();
         if (!empty($variablesInRoute)) {
             return $this->replaceVariableNamesWithValues($arguments);
+        }
+        return $arguments;
+    }
+
+    private function instanciateObjects(array $arguments)
+    {
+        foreach ($arguments as $key => $argument) {
+            if (preg_match('/object:(.+)/i', $argument, $matches)) {
+                $arguments[$key] = new $matches[1];
+            }
         }
         return $arguments;
     }
@@ -92,5 +104,10 @@ class Router
     private function getPathVariablesByNamedKey()
     {
         return array_combine($this->getVariablesInRoute(), $this->pathVariableData);
+    }
+
+    private function constructorArguments()
+    {
+        return $this->functionArguments($forConstructor = true);
     }
 }
